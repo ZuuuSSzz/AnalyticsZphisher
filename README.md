@@ -9,9 +9,9 @@ This project integrates a custom data collection system into the [Zphisher](http
 
 ## 📁 Project Structure
 
-         auth/index.html # Custom login page (phishing simulation)
-         auth/get_data.php # Script to capture and log credentials
-         zphisher.sh # Updated Zphisher script pointing to the auth folder
+- auth/index.html 
+- auth/get_data.php
+- zphisher.sh
 
 ---
 
@@ -42,19 +42,7 @@ This project integrates a custom data collection system into the [Zphisher](http
 
 ## 🎯 Project Goal
 
-- Simulate phishing in a controlled environment
-
-- Capture test data such as usernames and passwords
-
-- Use the captured data to build a dashboard for:
-
-- Credential pattern analysis
-
-   - Timestamp logging
-
-   - Source IP tracking (optional)
-
-   - User behavior study (mock only)
+The goal of this project is to simplify the way phishing data is collected and viewed using Zphisher. Instead of just reading raw data from the terminal, this project lets users store login information from phishing pages in a structured way and makes it easier to visualize and analyze later—possibly through an analytics dashboard or interface. It helps improve understanding of how phishing attempts perform without digging through logs manually.
 
 
 ## 🙏 Credits
