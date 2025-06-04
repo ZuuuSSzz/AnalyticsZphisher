@@ -47,6 +47,6 @@ The goal of this project is to simplify the way phishing data is collected and v
 
 ## 🙏 Credits
 
-htr-tech/zphisher – Base tool used for simulation.
+htr-tech/zphisher – Owner tools Zphisher
 
 Custom modifications by ZuuuSSzz.
