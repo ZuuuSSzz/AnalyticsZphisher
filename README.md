@@ -36,9 +36,9 @@ This project integrates a custom data collection system into the [Zphisher](http
 
    - This version is modified to:
 
-         Load the custom auth/ folder
+         - Load the custom auth/ folder
 
-         Properly direct captured form data to get_data.php
+         - Properly direct captured form data to get_data.php
 
 ## 🎯 Project Goal
 
