@@ -25,10 +25,10 @@ AnalyticsZphisher/
 
 1. **Clone Zphisher from GitHub**
 
-   git clone https://github.com/htr-tech/zphisher.git
-   cd zphisher
+         git clone https://github.com/htr-tech/zphisher.git
+         cd zphisher
    
-2. **Replace the phishing site files**
+3. **Replace the phishing site files**
 
    - Inside sites/, create or replace the directory auth/ with your own:
 
@@ -36,47 +36,34 @@ AnalyticsZphisher/
 
          - get_data.php (to store form input in a file or database)
 
-3. Replace zphisher.sh
+4. Replace zphisher.sh
 
-Replace the original zphisher.sh with the updated version from this repo.
+   - Replace the original zphisher.sh with the updated version from this repo.
 
-This version is modified to:
+   - This version is modified to:
 
-Load the custom auth/ folder
+         Load the custom auth/ folder
 
-Properly direct captured form data to get_data.php
+         Properly direct captured form data to get_data.php
 
-🎯 Project Goal
-Simulate phishing in a controlled environment
+## 🎯 Project Goal
 
-Capture test data such as usernames and passwords
+- Simulate phishing in a controlled environment
 
-Use the captured data to build a dashboard for:
+- Capture test data such as usernames and passwords
 
-Credential pattern analysis
+- Use the captured data to build a dashboard for:
 
-Timestamp logging
+- Credential pattern analysis
 
-Source IP tracking (optional)
+   - Timestamp logging
 
-User behavior study (mock only)
+   - Source IP tracking (optional)
 
-📈 Future Plans
-Integrate visual analytics dashboard (e.g. using PHP/JS/Chart.js)
+   - User behavior study (mock only)
 
-Add honeypot logging features
 
-Create real-time threat alerting system (for educational red team labs)
+## 🙏 Credits
 
-📌 Important Notice
-This is not intended for real-world deployment.
-
-It is meant for student research, awareness campaigns, and CTF learning environments.
-
-✅ Always use responsibly.
-❌ Never use against real users without permission.
-
-🙏 Credits
 htr-tech/zphisher – Base tool used for simulation.
-
 Custom modifications by ZuuuSSzz.
