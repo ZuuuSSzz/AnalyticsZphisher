@@ -9,15 +9,9 @@ This project integrates a custom data collection system into the [Zphisher](http
 
 ## 📁 Project Structure
 
-AnalyticsZphisher/
-│
-├── auth/
-│ ├── index.html # Custom login page (phishing simulation)
-│ └── get_data.php # Script to capture and log credentials
-│
-├── zphisher.sh # Updated Zphisher script pointing to the auth folder
-└── README.md # This documentation
-
+         auth/index.html # Custom login page (phishing simulation)
+         auth/get_data.php # Script to capture and log credentials
+         zphisher.sh # Updated Zphisher script pointing to the auth folder
 
 ---
 
@@ -66,4 +60,5 @@ AnalyticsZphisher/
 ## 🙏 Credits
 
 htr-tech/zphisher – Base tool used for simulation.
+
 Custom modifications by ZuuuSSzz.
