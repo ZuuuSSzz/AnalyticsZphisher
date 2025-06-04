@@ -47,7 +47,6 @@ The goal of this project is to simplify the way phishing data is collected and v
 
 ## 🙏 Credits
 
-htr-tech/zphisher – Owner tools Zphisher
-         - https://github.com/htr-tech/zphisher.git
+htr-tech/zphisher – Owner tools Zphisher    https://github.com/htr-tech/zphisher.git
 
 Custom modifications by ZuuuSSzz.
