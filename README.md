@@ -42,7 +42,7 @@ This project integrates a custom data collection system into the [Zphisher](http
 
 ## 🎯 Project Goal
 
-The goal of this project is to simplify the way phishing data is collected and viewed using Zphisher. Instead of just reading raw data from the terminal, this project lets users store login information from phishing pages in a structured way and makes it easier to visualize and analyze later—possibly through an analytics dashboard or interface. It helps improve understanding of how phishing attempts perform without digging through logs manually.
+The goal of this project is to simplify the way phishing data is collected and viewed using Zphisher. Instead of just reading raw data from the terminal, this project lets users store login information from phishing pages in a structured way and makes it easier to visualize and analyze later possibly through an analytics dashboard or interface. It helps improve understanding of how phishing attempts perform without digging through logs manually.
 
 
 ## 🙏 Credits
