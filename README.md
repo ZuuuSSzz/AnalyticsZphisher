@@ -24,18 +24,19 @@ AnalyticsZphisher/
 ## 🛠️ Setup Instructions
 
 1. **Clone Zphisher from GitHub**
-   ```bash
+
    git clone https://github.com/htr-tech/zphisher.git
    cd zphisher
-Replace the phishing site files
+   
+2. **Replace the phishing site files**
 
-Inside sites/, create or replace the directory auth/ with your own:
+   - Inside sites/, create or replace the directory auth/ with your own:
 
-index.html (custom phishing form)
+         - index.html (custom phishing form)
 
-get_data.php (to store form input in a file or database)
+         - get_data.php (to store form input in a file or database)
 
-Replace zphisher.sh
+3. Replace zphisher.sh
 
 Replace the original zphisher.sh with the updated version from this repo.
 
